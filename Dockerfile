@@ -1,4 +1,4 @@
-FROM python:3.8-alpine as builder
+FROM python:3.9-alpine as builder
 
 ARG TIMEZONE=Europe/Moscow
 
@@ -12,25 +12,25 @@ RUN pip install --prefix=/install -r ./requirements.txt
 
 
 # ========== final image
-FROM python:3.8-alpine as production
+FROM python:3.9-alpine as production
 LABEL maintainer="https://github.com/strpc"
 
 RUN apk add --no-cache curl
 
+RUN adduser --uid 1000 --home /src --disabled-password --gecos "" backend && \
+    chown -hR backend: /src
+
+WORKDIR /src
+
 ENV PYTHONUNBUFFERED 1
-
-RUN adduser --uid 1000 --home /app --disabled-password --gecos "" backend && \
-    chown -hR backend: /app
-
-WORKDIR /app
+ENV PYTHONPATH=/src
 
 COPY --from=builder /etc/timezone /etc/timezone
 COPY --from=builder /etc/localtime /etc/localtime
 COPY --from=builder /install /usr/local
 
-COPY --chown=backend:backend . /app
-
-ENV PYTHONPATH=/app/app
+COPY --chown=backend:backend ./app /src/app
+COPY --chown=backend:backend ./entrypoint.sh .
 
 RUN chmod +x ./entrypoint.sh
 
