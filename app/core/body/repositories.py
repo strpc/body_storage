@@ -22,7 +22,5 @@ class BodyRepository:
     def get_count_bodies(self) -> int:
         return len(self._storage)
 
-    def get_duplicates_bodies(self) -> int:
-        return sum(
-            v["duplicates"] for v in filter(lambda o: o["duplicates"] > 1, self._storage.values())
-        )
+    def get_bodies_with_duplicates(self) -> list[dict[Any, Any]]:
+        return list(filter(lambda o: o["duplicates"] > 1, self._storage.values()))
