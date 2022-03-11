@@ -3,5 +3,7 @@ version: "3.8"
 services:
   backend:
     environment:
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=DEBUG
     command: "dev"
+    volumes:
+      - ./app:/src/app

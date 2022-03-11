@@ -7,7 +7,9 @@ services:
       context: .
     restart: unless-stopped
     environment:
-      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    ports:
+      - ${APP_PORT:-8000}:${APP_PORT:-8000}
     healthcheck:
       test:
         - "CMD"
