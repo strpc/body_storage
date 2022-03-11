@@ -1,9 +1,12 @@
+from typing import Any
+
 import pytest
 from fastapi.testclient import TestClient
 
 
-def test_get_body_wrong_query(http_client: TestClient) -> None:
-    response = http_client.get("/api/body", params={"key": None})
+@pytest.mark.parametrize("params", [{}, {"key": None}])
+def test_get_body_wrong_query(http_client: TestClient, params: dict[Any, Any]) -> None:
+    response = http_client.get("/api/body", params=params)
 
     assert response.status_code == 422
 
