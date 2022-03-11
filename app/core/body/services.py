@@ -51,15 +51,21 @@ class BodyService:
         except BodyNotFound:
             return False
 
+    def get_percent_duplicates_bodies(self) -> Union[int, float]:
+        duplicate_bodies = self._repository.get_bodies_with_duplicates()
+        if len(duplicate_bodies) == 0:
+            return 0
+
+        duplicate_count = self._count_duplicate_bodies(duplicate_bodies)
+        bodies_count = self._repository.get_count_bodies()
+        return duplicate_count / bodies_count * 100
+
     @staticmethod
     def _get_body_key(body: dict[Any, Any]) -> str:
         key = b"".join(f"{k}{v}".encode() for k, v in body.items())
         encoded_key = base64.b64encode(key)
         return encoded_key.decode("utf-8")
 
-    def get_percent_duplicates_bodies(self) -> Union[int, float]:
-        count = self._repository.get_count_bodies()
-        duplicate = self._repository.get_duplicates_bodies()
-        if duplicate == 0:
-            return 0
-        return count / duplicate * 100
+    @staticmethod
+    def _count_duplicate_bodies(bodies: list[dict[Any, Any]]) -> int:
+        return sum(b["duplicates"] - 1 for b in bodies)
