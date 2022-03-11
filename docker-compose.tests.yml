@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+  backend_test:
+    image: backend:test
+    build:
+      context: .
+      dockerfile: test.Dockerfile
